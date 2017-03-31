@@ -2,6 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import shallowCompare from 'react/lib/shallowCompare';
 import classnames from 'classnames';
 import SuggestItem from './suggest-item';
+import {List} from 'material-ui/List';
 
 /**
  * The list with suggestions. Either from an API or provided as fixture
@@ -51,24 +52,22 @@ export default class SuggestList extends React.Component {
       {[this.props.hiddenClassName]: this.props.hiddenClassName ?
         this.isHidden() : null}
     );
-
-    return <ul className={classes} style={this.props.style}>
+    return <List className={classes} style={this.props.style}>
       {this.props.suggests.map(suggest => {
         const isActive = this.props.activeSuggest &&
           suggest.placeId === this.props.activeSuggest.placeId;
-
         return <SuggestItem key={suggest.placeId}
-          className={suggest.className}
-          suggest={suggest}
-          style={this.props.suggestItemStyle}
-          suggestItemClassName={this.props.suggestItemClassName}
-          isActive={isActive}
-          activeClassname={this.props.suggestItemActiveClassName}
-          onMouseDown={this.props.onSuggestMouseDown}
-          onMouseOut={this.props.onSuggestMouseOut}
-          onSelect={this.props.onSuggestSelect} />;
+                  className={suggest.className}
+                  suggest={suggest}
+                  style={this.props.suggestItemStyle}
+                  suggestItemClassName={this.props.suggestItemClassName}
+                  isActive={isActive}
+                  activeClassname={this.props.suggestItemActiveClassName}
+                  onMouseDown={this.props.onSuggestMouseDown}
+                  onMouseOut={this.props.onSuggestMouseOut}
+                  onSelect={this.props.onSuggestSelect} />;
       })}
-    </ul>;
+    </List>;
   }
 }
 

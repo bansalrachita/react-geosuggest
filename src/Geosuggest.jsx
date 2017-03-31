@@ -3,13 +3,14 @@
 import React from 'react';
 import classnames from 'classnames';
 import debounce from 'lodash.debounce';
-
 import defaults from './defaults';
 import propTypes from './prop-types';
 import filterInputAttributes from './filter-input-attributes';
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Input from './input';
 import SuggestList from './suggest-list';
+// import injectTapEventPlugin from 'react-tap-event-plugin';
+// injectTapEventPlugin();
 
 // Escapes special characters in user input for regex
 function escapeRegExp(str) {
@@ -19,6 +20,7 @@ function escapeRegExp(str) {
 /**
  * Entry point for the Geosuggest component
  */
+
 class Geosuggest extends React.Component {
   /**
    * The constructor. Sets the initial state.
@@ -65,7 +67,7 @@ class Geosuggest extends React.Component {
 
     var googleMaps = this.props.googleMaps ||
       (window.google && // eslint-disable-line no-extra-parens
-        window.google.maps) ||
+      window.google.maps) ||
       this.googleMaps;
 
     /* istanbul ignore next */
@@ -198,8 +200,8 @@ class Geosuggest extends React.Component {
           this.setState({isLoading: false});
           this.updateSuggests(suggestsGoogle || [], // can be null
             () => {
-              if (this.props.autoActivateFirstSuggest &&
-                !this.state.activeSuggest
+              if (this.props.autoActivateFirstSuggest
+                && !this.state.activeSuggest
               ) {
                 this.activateSuggest('next');
               }
@@ -241,7 +243,8 @@ class Geosuggest extends React.Component {
         suggests.push({
           label: this.props.getSuggestLabel(suggest),
           placeId: suggest.place_id,
-          isFixture: false
+          isFixture: false,
+          types: suggest.types
         });
       }
     });
@@ -289,7 +292,7 @@ class Geosuggest extends React.Component {
         activeSuggest: null
       });
     }, 100);
-  }
+  };
 
   /**
    * Activate a new suggest
@@ -322,7 +325,6 @@ class Geosuggest extends React.Component {
     }
 
     this.props.onActivateSuggest(newActiveSuggest);
-
     this.setState({activeSuggest: newActiveSuggest});
   }
 
@@ -358,7 +360,7 @@ class Geosuggest extends React.Component {
   geocodeSuggest(suggest) {
     this.geocoder.geocode(
       suggest.placeId && !suggest.isFixture ?
-        {placeId: suggest.placeId} : {address: suggest.label},
+      {placeId: suggest.placeId} : {address: suggest.label},
       (results, status) => {
         if (status === this.googleMaps.GeocoderStatus.OK) {
           var gmaps = results[0],
@@ -388,45 +390,47 @@ class Geosuggest extends React.Component {
       ),
       shouldRenderLabel = this.props.label && attributes.id,
       input = <Input className={this.props.inputClassName}
-        ref='input'
-        value={this.state.userInput}
-        ignoreEnter={!this.state.isSuggestsHidden}
-        ignoreTab={this.props.ignoreTab}
-        style={this.props.style.input}
-        onChange={this.onInputChange}
-        onFocus={this.onInputFocus}
-        onBlur={this.onInputBlur}
-        onKeyPress={this.props.onKeyPress}
-        onNext={this.onNext}
-        onPrev={this.onPrev}
-        onSelect={this.onSelect}
-        onEscape={this.hideSuggests} {...attributes} />,
+                     ref='input'
+                     value={this.state.userInput}
+                     ignoreEnter={!this.state.isSuggestsHidden}
+                     ignoreTab={this.props.ignoreTab}
+                     style={this.props.style.input}
+                     onChange={this.onInputChange}
+                     onFocus={this.onInputFocus}
+                     onBlur={this.onInputBlur}
+                     onKeyPress={this.props.onKeyPress}
+                     onNext={this.onNext}
+                     onPrev={this.onPrev}
+                     onSelect={this.onSelect}
+                     onEscape={this.hideSuggests} {...attributes} />,
       suggestionsList = <SuggestList isHidden={this.state.isSuggestsHidden}
-        style={this.props.style.suggests}
-        suggestItemStyle={this.props.style.suggestItem}
-        suggestsClassName={this.props.suggestsClassName}
-        suggestItemClassName={this.props.suggestItemClassName}
-        suggests={this.state.suggests}
-        hiddenClassName={this.props.suggestsHiddenClassName}
-        suggestItemActiveClassName={this.props.suggestItemActiveClassName}
-        activeSuggest={this.state.activeSuggest}
-        onSuggestNoResults={this.onSuggestNoResults}
-        onSuggestMouseDown={this.onSuggestMouseDown}
-        onSuggestMouseOut={this.onSuggestMouseOut}
-        onSuggestSelect={this.selectSuggest}/>;
+                      style={this.props.style.suggests}
+                      suggestItemStyle={this.props.style.suggestItem}
+                      suggestsClassName={this.props.suggestsClassName}
+                      suggestItemClassName={this.props.suggestItemClassName}
+                      suggests={this.state.suggests}
+                      hiddenClassName={this.props.suggestsHiddenClassName}
+            suggestItemActiveClassName={this.props.suggestItemActiveClassName}
+                      activeSuggest={this.state.activeSuggest}
+                      onSuggestNoResults={this.onSuggestNoResults}
+                      onSuggestMouseDown={this.onSuggestMouseDown}
+                      onSuggestMouseOut={this.onSuggestMouseOut}
+                      onSuggestSelect={this.selectSuggest}/>;
 
-    return <div className={classes}>
-      <div className="geosuggest__input-wrapper">
-        {shouldRenderLabel &&
-          <label className="geosuggest__label"
-                 htmlFor={attributes.id}>{this.props.label}</label>
-        }
-        {input}
-      </div>
-      <div className="geosuggest__suggests-wrapper">
-        {suggestionsList}
-      </div>
-    </div>;
+    return <MuiThemeProvider>
+        <div className={classes}>
+          <div className="geosuggest__input-wrapper">
+            {shouldRenderLabel &&
+            <label className="geosuggest__label"
+                   htmlFor={attributes.id}>{this.props.label}</label>
+            }
+            {input}
+          </div>
+          <div className="geosuggest__suggests-wrapper">
+            {suggestionsList}
+          </div>
+        </div>
+      </MuiThemeProvider>;
   }
 }
 

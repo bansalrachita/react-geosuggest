@@ -1,14 +1,16 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import shallowCompare from 'react/lib/shallowCompare';
-import classnames from 'classnames';
-
 import filterInputAttributes from './filter-input-attributes';
+import TextField from 'material-ui/TextField';
+import Paper from 'material-ui/Paper';
+import ActionSearch from 'material-ui/svg-icons/action/search';
 
 /**
  * The input field
  * @param {Object} props The component's props
  * @return {JSX} The icon component.
  */
+
 class Input extends React.Component {
   /**
    * Whether or not the component should update
@@ -22,24 +24,27 @@ class Input extends React.Component {
 
   /**
    * When the input got changed
+   * @param {Object} event targeting the change
+   * @param {String} newValue of the text field
    */
-  onChange = () => {
-    this.props.onChange(this.refs.input.value);
-  }
+  onChange = (event, newValue) => {
+    // this.props.onChange(event.target.value);
+    this.props.onChange(newValue);
+  };
 
   /**
    * When the input got focused
    */
   onFocus = () => {
     this.props.onFocus();
-  }
+  };
 
   /**
    * When the input loses focus
    */
   onBlur = () => {
     this.props.onBlur();
-  }
+  };
 
   /**
    * When a key gets pressed in the input
@@ -47,7 +52,7 @@ class Input extends React.Component {
    */
   onKeyPress = event => {
     this.props.onKeyPress(event);
-  }
+  };
 
   /**
    * When a key gets pressed in the input
@@ -104,23 +109,27 @@ class Input extends React.Component {
    */
   render() {
     const attributes = filterInputAttributes(this.props),
-      classes = classnames(
-        'geosuggest__input',
-        this.props.className
-      );
-
-    return <input className={classes}
-      ref='input'
-      type='text'
-      autoComplete='off'
-      {...attributes}
-      value={this.props.value}
-      style={this.props.style}
-      onKeyDown={this.onInputKeyDown}
-      onChange={this.onChange}
-      onKeyPress={this.onKeyPress}
-      onFocus={this.onFocus}
-      onBlur={this.onBlur} />;
+      iconSearch = <ActionSearch
+      className='geosuggest__input__img'
+    />;
+    return <Paper className={this.props.className}>
+      {iconSearch}
+      <TextField className='geosuggest__input'
+                 id='geosuggest__input_1'
+                 ref='input'
+                 type='text'
+                 autoComplete='off'
+                 {...attributes}
+                 value={this.props.value}
+                 style={this.props.style}
+                 onKeyDown={this.onInputKeyDown}
+                 onChange={this.onChange}
+                 onKeyPress={this.onKeyPress}
+                 onFocus={this.onFocus}
+                 onBlur={this.onBlur}
+                 underlineShow={false}
+                 fullWidth={true}/>
+    </Paper>;
   }
 }
 
@@ -132,8 +141,10 @@ Input.defaultProps = {
   className: '',
   value: '',
   ignoreTab: false,
-  onKeyDown: () => {},
-  onKeyPress: () => {}
+  onKeyDown: () => {
+  },
+  onKeyPress: () => {
+  }
 };
 
 export default Input;
